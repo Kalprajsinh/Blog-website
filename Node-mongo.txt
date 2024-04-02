@@ -1,0 +1,166 @@
+kalpraj51
+2u4spQTgutjGuXKz
+
+---------------------------------------------------------
+npm init -y
+npm i express body-parser mongoose dotenv
+node index.js
+---------------------------------------------------------
+make file index.js first
+---------------------------------------------------------
+make floder name public
+    > have Html,css code
+    > index.html
+
+---------------------------------------------------------
+=> index.js
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+
+const app = express();
+
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+
+app.get("/", (req, res) => {
+  res.redirect('index.html');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+------------------------------------------------------
+=> how to connect to database
+mongoose.connect('mongodb+srv://kalpraj51:FEkXXxZu0SeNXWiq@cluster0.dly4bej.mongodb.net/Blog?retryWrites=true&w=majority&appName=Cluster0')
+  .then(() => console.log("Connected to Database"))
+  .catch((error) => console.log("Error in Connecting to Database:", error));
+
+--------------------- other
+
+mongoose.connect(
+'mongodb+srv://${username}:${password}@${clusterName}.mongodb.net/${databaseName}? retryWrites=true&w=majority,
+);
+
+---------------------------------------------------------
+in form index.html
+ <form action="/sign_up" method="POST"> add name =""
+
+----------------------------------------------------
+write this for user data
+
+  const UserSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    password: String
+  });
+
+const User = mongoose.model('User', UserSchema);  
+ // this '' is collection name 
+
+
+if want 2 
+const blogSchema = new mongoose.Schema({
+    userEmail: String,
+    title: String,
+    description: String,
+    information: String
+});
+
+// Create Mongoose models
+const User = mongoose.model('User', userSchema);
+const Blog = mongoose.model('Blog', blogSchema);
+-----------------------------------------------------
+
+for signup
+
+app.post("/sign_up", async (req, res) => {
+
+    //console.log(req.body); - have user infromation html body post
+    const user = new User(req.body);
+    await user.save();
+    console.log("Record Inserted Successfully");
+    res.redirect('signup_successful.html');
+});
+
+--------------------------------------------------
+
+for login
+
+app.post("/login", async (req, res) => {
+
+  const { email, password } = req.body;  // find only 2 tiems
+  const user = await User.findOne({ email: email, password: password });
+  if (!user) {
+    return res.status(401).send("Invalid email or password");
+  }
+  console.log("Login Successful");
+  res.redirect(`/login_successful.html`);
+});
+
+-------------------------------------------------
+
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////
+
+npm i ejs
+
+const express = require('express')
+const app = express()
+const port = 3000
+
+app.set('view engine', 'ejs');
+
+app.get('/', (req, res) => {
+    let siteName = "................"
+    let searchText = "..................."
+    let arr = ["Hey", 54, 65]
+    res.render("index", { siteName: siteName, searchText: searchText, arr })
+})
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+})
+
+
+--------------------
+views 
+   |- index.ejs
+   |-
+index.js
+--------------------
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+
+
+    value is <%= arr[0] %>
+    <%= siteName %>, <%= searchText %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
